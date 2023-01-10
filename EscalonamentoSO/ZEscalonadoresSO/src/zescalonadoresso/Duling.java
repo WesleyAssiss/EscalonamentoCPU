@@ -1,14 +1,13 @@
 package zescalonadoresso;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 import javax.swing.JOptionPane;
 
 //Shorted Jobs First//
-public class Duling implements Comparable<Duling> {
+public class Duling implements Comparable<Duling> {//Comparable herda na classe Duling (Apenas metodo Public)
     //quantidade de processos /Tempo de Execução / Tempo médio / turnaround /prioridade
 
     private int quantProc, iBurst, wt, tt, priority;
@@ -31,6 +30,7 @@ public class Duling implements Comparable<Duling> {
         this.sBurst = sBurst;
         this.priority = priority;
         this.prioridade = prioridade;
+
     }
     //O Objetivo aqui é fazer os devidos cálculos, no Duling o primeiro processo que executa é o com 
     //prioridade maior, no caso o 1 e assim pro diante.
@@ -49,17 +49,31 @@ public class Duling implements Comparable<Duling> {
             priority = definePrioridade(prioridade);// chama função para definição da prioridade manual / automático 
             id = i + 1;// soma  "i" para não existir id 0  
             Duling p = new Duling(iBurst, id, sBurst, priority, prioridade);
-            duling.add(p); // adiciona objeto a um ArrayList de processos
-
+            duling.add(p); // adiciona objeto a um ArrayList de processos         
+          
         }
-
-        Collections.sort(duling);// Ordena processos por maior prioridade (no caso 1). 
+ 
+      //Selection Sort
+        for (int i = 0; i < duling.size() - 1; i++) {
+            for (int k = 0; k < duling.size() - 1; k++) {
+                               
+                if (duling.get(k).priority > duling.get(k + 1).priority) {//obejto atual é o objeto da frente
+                    Duling aux = duling.get(k); //Se ele for eu troco o objeto
+                    duling.set(k,duling.get(k + 1));// Ex se na posição [0] o valor for = 1 e na posição [1] = 0
+                    //então este valor 1 irá para o AUX e o valor da posição [1] = 0 passara para a posição[0]                   
+                    duling.set(k + 1,aux);//Após ser feito a ordenação o valor AUX que agora é = 1 passa
+                    //para posição [1].
+                }                 
+            }
+        }
+   
         for (int i = 0; i < quantProc; i++) {
             if (i == 0) {
-                duling.get(i).tt = duling.get(i).iBurst;
+                duling.get(i).tt = duling.get(i).iBurst;             
             } else {
-                duling.get(i).tt = duling.get(j).tt + duling.get(i).iBurst;
+                duling.get(i).tt = duling.get(j).tt + duling.get(i).iBurst;               
                 duling.get(i).wt = duling.get(j).iBurst + duling.get(j).wt;
+                
             }
             j++;
         }
@@ -88,7 +102,7 @@ public class Duling implements Comparable<Duling> {
 
     public int defineBurst(String opcao) {
         if (opcao.equals("m")) {
-           iBurst = Integer.valueOf(JOptionPane.showInputDialog("Tamanho do tempo de execução "+(id+1)+": "));
+            iBurst = Integer.valueOf(JOptionPane.showInputDialog("Tamanho do tempo de execução " + (id + 1) + ": "));
         } else if (opcao.equals("a")) {
             iBurst = random.nextInt(50) + 1;
         }
@@ -98,13 +112,18 @@ public class Duling implements Comparable<Duling> {
 
     public int definePrioridade(String opcao) {
         if (opcao.equals("m")) {
-            priority = Integer.valueOf(JOptionPane.showInputDialog("Tamanho da prioridade: "+(id+1)+": "));
+            priority = Integer.valueOf(JOptionPane.showInputDialog("Tamanho da prioridade " + (id + 1) + ": "));
         } else if (opcao.equals("a")) {
             priority = random.nextInt(50) + 1;
         }
-        return iBurst;
+        return priority;
     }
+/*
+    p1  p2 p3
+    10  5   2
+     2  1   3
 
+    */
     @Override
     public int compareTo(Duling p) {//sobescrição do metodo compareTo para organizar o ArrayList com o atributo tempo de execução
         if (iBurst < p.iBurst) {
@@ -116,3 +135,4 @@ public class Duling implements Comparable<Duling> {
         }
     }
 }
+
